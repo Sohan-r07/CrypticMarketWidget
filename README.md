@@ -52,6 +52,43 @@ python main.py
 
 You should see the glowing handle for the Widget on the side of your screen.
 
+**Tips:**
+
+To make the widget start on startup:
+
+**Windows:**
+
+1. Press Win + R, type shell:startup, and press Enter to open your Windows Startup folder.
+
+2. Right-click inside the folder, select New -> Shortcut.
+
+3. In the location field, paste the path pointing to your virtual environment's pythonw.exe (which hides the terminal window) and your main.py:
+```bash
+"C:\path\to\CrypticMarketWidget\.venv\Scripts\pythonw.exe" "C:\path\to\CrypticMarketWidget\main.py"
+#(Make sure to replace C:\path\to\CrypticMarketWidget with your actual absolute project path).
+```
+4. Click Next, name it CrypticMarketWidget, and click Finish.
+
+**Linux or Ubuntu:**
+1. Create a new autostart desktop entry file:
+```bash
+nano ~/.config/autostart/cryptic-widget.desktop
+```
+2. Paste the following configuration and change "/path/to/CrypticMarketWidget" to your actual path
+```ini
+[Desktop Entry]
+Type=Application
+Name=Cryptic Market Widget
+Exec=/path/to/CrypticMarketWidget/.venv/bin/python /path/to/CrypticMarketWidget/main.py
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+```
+
+3. Save and exit (Ctrl + O, then Enter, then Ctrl + X).
+
+
+
 **Project Structure**
 ```bash
 CrypticMarketWidget
@@ -61,3 +98,7 @@ CrypticMarketWidget
   |-----------widgetui.py      --> The main Widget UI manager that manages all the styling and design of the Widget
 ```
 
+
+**Credits:**
+The use of Google Gemini was made to help with the designing of the Widget UI itself.
+Github Copilot autocomplete was used in the development to aid speed.
