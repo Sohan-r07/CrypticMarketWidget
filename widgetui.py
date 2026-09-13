@@ -94,6 +94,8 @@ class SymbolCard(QFrame):
         
         self.setFixedSize(260, 115)
         self.setObjectName("Card")
+
+        self.lastprice = None
         
         # Dark Glassmorphism with "Light Catcher" directional borders
         self.setStyleSheet("""
@@ -188,6 +190,9 @@ class SymbolCard(QFrame):
             return
             
         price, change, is_up = data["price"], data["change"], data["is_up"]
+        high = data.get("high",0.0)
+        low = data.get("low", 0.0)
+        self.setToolTip(f"<b>{self.symbol} 24h Range</b><br>High: ${high:,.2f}<br>Low: ${low:,.2f}")
         
         # Human touch: adjust decimal places for micro-caps vs majors
         if price < 1.0:
@@ -206,6 +211,33 @@ class SymbolCard(QFrame):
             self.live_dot.setStyleSheet("background-color: #FF3366; border-radius: 3px;")
 
         self.sparkline.update_data(price, is_up)
+
+        if self.lastprice is not None and price != self.lastprice:
+            flashcolor = "rgba(0,255,163,0.75)" if price > self.lastprice else "rgba(255,52,102,0.75)"
+            self.setStyleSheet(f"""
+            QFrame#Card {{
+                background-color: rgba(22,26,35,240);
+                border: 1px solid {flashcolor};
+                border-radius: 10px;
+            }}""")
+        cola = "rgba(255, 255, 255, 18)"
+        colb = "rgba(255, 255, 255, 4)"
+        QTimer.singleShot(400, lambda: self.setStyleSheet("""
+                            QFrame#Card {
+                            background-color: rgba(16,19,26,220);
+                            border-radius: 10px;
+                            border-top: 1px solid rgba(255, 255, 255, 18);
+                            border-left: 1px solid rgba(255, 255, 255, 18);
+                            border-bottom: 1px solid rgba(255, 255, 255, 4);
+                            border-right: 1px solid rgba(255, 255, 255, 4);
+                            }
+                            QFrame#Card:hover {
+                            background-color: rgba(22, 26, 35, 240);
+                            border-top: 1px, solid rgba(0, 255, 163, 60);
+                            border-left: 1px solid rgba(0, 255, 163, 60);
+                            }
+                            """))
+        self.lastprice = price
 
 
 class CryptoWidget(QMainWindow):

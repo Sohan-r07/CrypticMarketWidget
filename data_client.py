@@ -29,7 +29,10 @@ class BinanceClient:
             return {
                 "price": price,
                 "change": change,
+                "high": float(data["highPrice"]),
+                "low": float(data["lowPrice"]),
                 "is_up": change >= 0
+
             }
 
         except requests.exceptions.RequestException as e:
