@@ -35,7 +35,7 @@ Right click on the widget to open the menu to close it.
 
 1.**Clone Repository**
 ```bash
-git clone [https://github.com/Sohan-r07/CrypticMarketWidget.git](https://github.com/Sohan-r07/CrypticMarketWidget.git)
+git clone https://github.com/Sohan-r07/CrypticMarketWidget.git
 
 cd CrypticMarketWidget
 ```
