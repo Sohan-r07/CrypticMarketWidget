@@ -1,7 +1,7 @@
 import sys
 from PyQt6.QtWidgets import (QMainWindow, QLabel, QVBoxLayout, QHBoxLayout, 
                              QWidget, QPushButton, QInputDialog, QFrame, QApplication,
-                             QGraphicsDropShadowEffect)
+                             QGraphicsDropShadowEffect, QMenu)
 from PyQt6.QtCore import Qt, QTimer, QPointF, QPropertyAnimation, QRect, QEasingCurve
 from PyQt6.QtGui import QFont, QPainter, QPainterPath, QPen, QColor, QLinearGradient
 
@@ -327,7 +327,40 @@ class CryptoWidget(QMainWindow):
         self.update_all()
         self.old_pos = None
 
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.show_context_menu)
+
         QTimer.singleShot(50, self.setup_initial_position)
+
+    def show_context_menu(self, pos):
+        contextmenu = QMenu(self)
+        contextmenu.setStyleSheet("""
+            QMenu {
+            background-color: #0F1219;
+            color: #FFFFFF;
+            border: 1px solid rgba(0, 255, 163,60);
+            border-radius: 5px;
+            padding: 4px;
+            font-family: 'Segoe UI';
+            font-size: 10px;
+            }
+
+            QMenu::item {
+            padding: 5px 15px;
+            border-radius: 5px;
+            }
+
+            QMenu::item:selected {
+            background-color: rgba(255, 51, 102, 0.2);
+            color: #FF3366;
+            }
+        """)
+
+        quit_action = contextmenu.addAction("X Quit")
+        quit_action.triggered.connect(QApplication.instance().quit)
+
+        contextmenu.exec(self.mapToGlobal(pos))
+
 
     def setup_initial_position(self):
         self.adjustSize()
