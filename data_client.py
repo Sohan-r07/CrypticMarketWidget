@@ -1,4 +1,7 @@
 import requests
+import json
+import os
+Holdings = "holdings.json"
 
 
 class BinanceClient:
@@ -42,3 +45,50 @@ class BinanceClient:
             #Detects any Unexpected JSON structures or errors
             print(f"Data parsing error: {e}")
             return None
+
+def holding_loader():
+    if os.path.exists(Holdings):
+        try:
+            with open(Holdings, "r") as holdings_data:
+                return json.load(holdings_data)
+        except:
+            return {}
+    return {}
+
+def alter_holdings(holdings_dict):
+    try:
+        with open(Holdings,"w") as holdings_data:
+            json.dump(holdings_dict, holdings_data, indent=4)
+    except Exception as e:
+        print(f"Error writing changes to the holding file: {e}")
+
+def calculate_portfolio():
+    holdings = holding_loader()
+    total_previous_value = 0.0
+    total_current_value = 0.0
+
+    #Loop through the symbols and get their data
+    for symbol, quantity in holdings.items():
+        cap_symbol = symbol.upper()
+        datasource = BinanceClient(cap_symbol)
+        if quantity > 0.0:
+
+            pricedata = datasource.get_ticker_data()
+            if pricedata is None:
+                print(f"Failed to fetch data for {cap_symbol}. Skipping this symbol.")
+                continue
+            curr_price = pricedata["price"]
+            changepct = pricedata["change"]
+
+            #calculate previous price based on change and current price
+            prev_price = curr_price / (1+(changepct/100.0))
+
+            #Update current portfolio value
+            total_current_value += curr_price * quantity
+            total_previous_value += prev_price * quantity
+
+    change = total_current_value - total_previous_value
+    pct_change = (change/total_previous_value * 100) if total_previous_value !=0 else 0.0
+
+
+    return [total_current_value, pct_change, change]
